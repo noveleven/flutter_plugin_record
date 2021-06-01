@@ -54,7 +54,7 @@ class FlutterPluginRecord {
       _responsePlayStateController.stream;
 
   ///原生回调
-  static Future<dynamic> _handler(MethodCall methodCall) async{
+  static Future<dynamic> _handler(MethodCall methodCall) async {
     // print("--------FlutterPluginRecord " + methodCall.method);
 
     String id = (methodCall.arguments as Map)['id'];
@@ -204,6 +204,12 @@ class FlutterPluginRecord {
   /// 提供停止播放的功能
   Future stopPlay() async {
     return await _invokeMethod('stopPlay', <String, String>{});
+  }
+
+  Future audioDurationFromURL(String url) async {
+    return await _invokeMethod('audioDurationFromURL', <String, String>{
+      "url": url,
+    });
   }
 
   dispose() {

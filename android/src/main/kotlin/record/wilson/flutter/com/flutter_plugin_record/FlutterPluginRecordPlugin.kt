@@ -25,6 +25,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import record.wilson.flutter.com.flutter_plugin_record.utils.*
 import java.io.File
 import java.util.*
+import android.media.MediaPlayer
 
 
 class FlutterPluginRecordPlugin : FlutterPlugin, MethodCallHandler, ActivityAware ,PluginRegistry.RequestPermissionsResultListener {
@@ -106,6 +107,7 @@ class FlutterPluginRecordPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
             "pause" -> pause()
             "playByPath" -> playByPath()
             "stopPlay" -> stopPlay()
+            "audioDurationFromURL" -> result.success(audioDurationFromURL())
             else -> result.notImplemented()
         }
     }
@@ -147,6 +149,17 @@ class FlutterPluginRecordPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private fun stopPlay() {
         recorderUtil?.stopPlay()
     }
+
+    private fun audioDurationFromURL() : Double {
+        val url = call.argument<String>("url")
+        val player = MediaPlayer()
+        player.setDataSource(url)
+        player.prepare()
+        val duration= player.getDuration()
+        player.release()
+        return duration/1000.0
+    }
+
     //暂停播放
     private fun pause() {
         val isPlaying= recorderUtil?.pausePlay()

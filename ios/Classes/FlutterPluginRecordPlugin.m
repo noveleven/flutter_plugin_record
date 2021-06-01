@@ -1,6 +1,7 @@
 #import "FlutterPluginRecordPlugin.h"
 #import "DPAudioRecorder.h"
 #import "DPAudioPlayer.h"
+#import <AVFoundation/AVFoundation.h>
 
 
 @implementation FlutterPluginRecordPlugin{
@@ -52,6 +53,8 @@
         [self playByPath];
     }else if([@"stopPlay" isEqualToString:method]){
         [self stopPlay];
+    }else if([@"audioDurationFromURL" isEqualToString:method]){
+        [self audioDurationFromURL];
     }else{
         result(FlutterMethodNotImplemented);
     }
@@ -240,6 +243,19 @@
     [_channel invokeMethod:@"onPlay" arguments:dict3];
 }
 
+/// 获取音频时长
+- (void)audioDurationFromURL {
+    AVURLAsset *audioAsset = nil;
+    NSDictionary *args = [_call arguments];
+    NSString *url = [args valueForKey:@"url"];
+    NSDictionary *dic = @{AVURLAssetPreferPreciseDurationAndTimingKey:@(YES)};
+    if ([url hasPrefix:@"http://"] || [url hasPrefix:@"https://"]) {
+        audioAsset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:url] options:dic];
+    }else {
+        audioAsset = [AVURLAsset URLAssetWithURL:[NSURL fileURLWithPath:url] options:dic];
+    }
+    _result(@(CMTimeGetSeconds(audioAsset.duration)));
+}
 
 @end
 
