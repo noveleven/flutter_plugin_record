@@ -153,11 +153,17 @@ class FlutterPluginRecordPlugin : FlutterPlugin, MethodCallHandler, ActivityAwar
     private fun audioDurationFromURL() : Double {
         val url = call.argument<String>("url")
         val player = MediaPlayer()
-        player.setDataSource(url)
-        player.prepare()
-        val duration= player.getDuration()
-        player.release()
-        return duration/1000.0
+        var duration = 0
+        try {
+            player.setDataSource(url)
+            player.prepare()
+            duration= player.getDuration()
+        }
+        catch(e:Exception) {}
+        finally {
+            player.release()
+            return duration/1000.0
+        }
     }
 
     //暂停播放
